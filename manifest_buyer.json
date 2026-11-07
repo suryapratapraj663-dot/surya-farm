@@ -1,0 +1,27 @@
+{
+  "name": "Surya Vyapari (सूर्य व्यापारी)",
+  "short_name": "Surya Vyapari",
+  "description": "थोक व्यापारी ऐप: AI द्वारा प्रमाणित ग्रेड A+ फसलें, डिजिटल खरीद पर्ची व किसान से सीधा संपर्क",
+  "start_url": "./buyer.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0a110c",
+  "theme_color": "#f59e0b",
+  "icons": [
+    {
+      "src": "icons/buyer-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/buyer-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "shopping", "finance"]
+}
+

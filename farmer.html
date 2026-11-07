@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>SURYA KISAN (सूर्य किसान) - Smart Farm IoT & AI Crop Scanner</title>
+  <meta name="description" content="किसान ऐप: खेत के IoT नोड्स, लाइव कैमरा, AI फसल स्कैनर, Telegram ऑटो-अलर्ट व पंप कंट्रोल">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="manifest" href="manifest_farmer.json">
+  <link rel="icon" type="image/png" href="icons/farmer-192.png">
+  <link rel="apple-touch-icon" href="icons/farmer-192.png">
+  <meta name="theme-color" content="#10b981">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+<body class="role-farmer">
+
+  <!-- =========================================================================
+       Farmer Top Header
+       ========================================================================= -->
+  <header class="app-header">
+    <div class="brand-group">
+      <div class="brand-logo-icon" style="background: linear-gradient(135deg, #10b981, #059669);">👨‍🌾</div>
+      <div class="brand-text">
+        <h1>SURYA KISAN APP</h1>
+        <div class="brand-subtitle">सूर्य किसान &bull; IoT & AI फार्मिंग प्लेटफ़ॉर्म</div>
+      </div>
+    </div>
+
+    <div class="header-center">
+      <div class="role-badge-pill pill-farmer">
+        👨‍🌾 किसान खाता (Farmer Portal)
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <!-- Switch to Buyer App link -->
+      <a href="buyer.html" class="btn-secondary-upload" style="padding: 0.35rem 0.85rem; font-size: 0.8rem; text-decoration: none; border-color: var(--accent-gold); color: var(--accent-gold);" title="Open Wholesale Buyer App">
+        🏢 थोक व्यापारी ऐप ↗
+      </a>
+
+      <!-- Notification Bell -->
+      <button id="btn-bell-toggle" class="btn-icon-header" title="Kisan Phone Notifications">
+        🔔
+        <span id="notif-badge" class="badge-counter" style="display: none;">0</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- =========================================================================
+       Farmer Navigation Tabs Bar
+       ========================================================================= -->
+  <nav class="nav-tabs-bar">
+    <button class="nav-tab-btn active" data-tab="nodes">
+      <span>📡</span> Mera Khet (IoT Nodes)
+    </button>
+    <button class="nav-tab-btn" data-tab="scanner">
+      <span>📱</span> AI Fasal Scanner (Phone Scan)
+    </button>
+    <button class="nav-tab-btn" data-tab="mandi">
+      <span>🛒</span> Meri Fasal & Mandi (Shop)
+    </button>
+    <button class="nav-tab-btn" data-tab="orders">
+      <span>📦</span> Mere Orders (बिक्री)
+      <span id="farmer-orders-badge" style="margin-left: 0.35rem; background: var(--accent-gold); color: #000; font-weight: 800; font-size: 0.72rem; padding: 0.1rem 0.45rem; border-radius: 999px;">0</span>
+    </button>
+    <button class="nav-tab-btn" data-tab="alerts">
+      <span>📲</span> Telegram Alerts & Pump
+    </button>
+    <button class="nav-tab-btn" data-tab="hardware">
+      <span>🛠️</span> Hardware AI & Code
+    </button>
+  </nav>
+
+  <!-- =========================================================================
+       Main Application Container
+       ========================================================================= -->
+  <main class="app-main-content">
+
+    <!-- -----------------------------------------------------------------------
+         TAB 1: Mera Khet (1 Khet - 4 Smart IoT Nodes)
+         ----------------------------------------------------------------------- -->
+    <section id="section-nodes" class="app-section active-section">
+      <div class="section-hero">
+        <div class="section-hero-title">
+          <h2>🌾 Mera Khet (1 Khet - 4 Smart IoT Nodes)</h2>
+          <p>कैमरा (10-min ऑटो स्कैन), तापमान, नमी व वायु गुणवत्ता नोड्स &bull; Telegram व वेबसाइट पंप कंट्रोल</p>
+        </div>
+        <div class="farmer-only" style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+          <button id="btn-open-add-node" class="btn-primary-scan" style="padding: 0.6rem 1.25rem; font-size: 0.9rem; background: var(--accent-gold); color: #000;" onclick="document.getElementById('add-node-modal').style.display='flex'">
+            ➕ Naya Node Jodein (Add Node)
+          </button>
+          <button id="btn-toggle-farm-connection" class="btn-primary-scan" style="padding: 0.6rem 1.25rem; font-size: 0.9rem;" onclick="window.iotNodeManager.toggleFarmConnection()">
+            🔌 Connect Farm Nodes (नोड्स कनेक्ट करें)
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Farm Status Banner with Connection Control -->
+      <div id="farm-status-banner-box" style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1rem 1.25rem; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+        <div style="display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap;">
+          <div>
+            <div style="font-size: 0.75rem; color: var(--text-secondary);">नोड्स की स्थिति (Hardware Connection):</div>
+            <div id="farm-connection-status-text" style="font-size: 1.15rem; font-weight: 800; color: #f87171;">
+              🔴 All Nodes Disconnected (नोड्स अभी बंद हैं)
+            </div>
+          </div>
+          <div>
+            <div style="font-size: 0.75rem; color: var(--text-secondary);">खेत का नाम (Single Field):</div>
+            <div style="font-size: 1.15rem; font-weight: 800; color: #ffffff;">Mera Khet (गेहूँ)</div>
+          </div>
+          <div>
+            <div style="font-size: 0.75rem; color: var(--text-secondary);">पंप नियंत्रण (Dual Control):</div>
+            <div style="font-size: 1.15rem; font-weight: 800; color: var(--accent-gold);">Website + Telegram (/pump_on)</div>
+          </div>
+        </div>
+        <div style="font-size: 0.8rem; color: var(--text-muted);">
+          📷 Cam (10-Min) &bull; 🌡️ Temp &bull; 💧 Moisture &bull; 💨 Air
+        </div>
+      </div>
+
+      <!-- Grid of 4 Specialized Node Cards -->
+      <div id="nodes-grid-container" class="nodes-grid">
+        <!-- Rendered by IoTNodeManager -->
+      </div>
+    </section>
+
+    <!-- -----------------------------------------------------------------------
+         TAB 2: AI Fasal Scanner (Phone Camera & Diagnostics)
+         ----------------------------------------------------------------------- -->
+    <section id="section-scanner" class="app-section">
+      <div class="section-hero">
+        <div class="section-hero-title">
+          <h2>📱 AI Fasal Scanner & Diagnostics</h2>
+          <p>फोन कैमरे या नोड से फसल स्कैन करें: जाने फसल तैयार हुई या नहीं, व क्या दिक्कत (रोग) है &bull; Telegram पर ऑटो-अलर्ट</p>
+        </div>
+      </div>
+
+      <div class="scanner-container-card">
+        <!-- Crop Type Selector & Mode Bar -->
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; background: var(--bg-surface-elevated); padding: 0.75rem 1rem; border-radius: var(--radius-md); margin-bottom: 1.25rem; border: 1px solid var(--border-subtle);">
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <label style="font-size: 0.85rem; font-weight: 700; color: #ffffff;">🌾 Fasal Ka Prakaar (Select Crop):</label>
+            <select id="scanner-crop-type-select" class="form-select" style="width: auto; padding: 0.4rem 0.75rem; font-size: 0.85rem;">
+              <option value="Wheat (गेहूँ)">🌾 Gehu (Wheat)</option>
+              <option value="Tomato (टमाटर)">🍅 Tamatar (Tomato)</option>
+              <option value="Mustard (सरसों)">🌼 Sarson (Mustard)</option>
+              <option value="Rice / Paddy (धान)">🍚 Dhaan (Rice)</option>
+              <option value="Potato (आलू)">🥔 Aloo (Potato)</option>
+              <option value="Vegetable / Other (अन्य)">🌿 Anya Fasal (Other)</option>
+            </select>
+          </div>
+          <div style="font-size: 0.75rem; color: var(--accent-emerald); font-weight: 600;">
+            🔬 Real-Time Computer Vision & Auto-Telegram Enabled
+          </div>
+        </div>
+
+        <!-- Camera Viewfinder & Preview Screen -->
+        <div class="scanner-viewport-wrapper" id="scanner-dropzone">
+          <video id="camera-viewfinder" autoplay playsinline muted></video>
+
+          <div id="scanned-preview-container">
+            <img id="scanned-preview-img" src="" alt="Scanned Crop">
+          </div>
+
+          <div id="camera-placeholder" class="camera-placeholder-content">
+            <div class="placeholder-icon">📷</div>
+            <div class="placeholder-title">Phone Camera Se Fasal Scan Karein</div>
+            <div class="placeholder-desc">
+              अपने मोबाइल के कैमरे से फसल की फोटो खींचें या नीचे दिए गए सैम्पल पर क्लिक करें। रिजल्ट आते ही सीधे आपके <b>Telegram</b> पर फोटो और रिपोर्ट आ जाएगी!
+            </div>
+            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content: center;">
+              <button class="btn-primary-scan" onclick="window.aiCropScanner.startCamera()">
+                <span>📸</span> Start Phone Camera
+              </button>
+              <button class="btn-secondary-upload" onclick="document.getElementById('crop-file-input').click()">
+                <span>📁</span> Upload Photo
+              </button>
+            </div>
+          </div>
+
+          <div class="scanner-hud-overlay">
+            <div class="reticle-box">
+              <div class="reticle-corner top-left"></div>
+              <div class="reticle-corner top-right"></div>
+              <div class="reticle-corner bottom-left"></div>
+              <div class="reticle-corner bottom-right"></div>
+              <div class="laser-scanner-line"></div>
+            </div>
+          </div>
+
+          <input type="file" id="crop-file-input" accept="image/*" style="display: none;">
+        </div>
+
+        <div id="camera-live-controls" class="scanner-actions-bar" style="display: none;">
+          <button class="btn-primary-scan" onclick="window.aiCropScanner.captureFromCamera()">
+            <span>🔴</span> Capture & Run AI Diagnosis
+          </button>
+          <button class="btn-secondary-upload" onclick="window.aiCropScanner.stopCamera()">
+            <span>✕</span> Stop Camera
+          </button>
+        </div>
+
+        <!-- Quick Demo Test Presets -->
+        <div class="presets-section">
+          <div class="presets-heading">
+            ⚡ Quick Test Samples (तुरंत जांचने के लिए किसी फसल पर क्लिक करें):
+          </div>
+          <div id="scan-presets-container" class="presets-grid"></div>
+        </div>
+
+        <!-- Neural Scanning Overlay -->
+        <div id="ai-scanning-overlay">
+          <div class="ai-spinner"></div>
+          <h3 style="font-size: 1.15rem; font-weight: 800; color: #ffffff; margin-bottom: 0.4rem;">
+            🤖 Surya Vision Neural Network Analyzing...
+          </h3>
+          <p id="ai-scan-step-text" style="color: var(--accent-emerald); font-size: 0.9rem;">
+            Analyzing pixel RGB spectrum & chlorophyll density...
+          </p>
+        </div>
+
+        <!-- Full AI Diagnostic Report Container -->
+        <div id="ai-report-container"></div>
+      </div>
+    </section>
+
+    <!-- -----------------------------------------------------------------------
+         TAB 3: Meri Fasal & Mandi (Farmer Produce & Orders)
+         ----------------------------------------------------------------------- -->
+    <section id="section-mandi" class="app-section">
+      <div class="section-hero">
+        <div class="section-hero-title">
+          <h2>🛒 Meri Fasal & Mandi Listings</h2>
+          <p>आपकी AI प्रमाणित फसलें जो थोक व्यापारियों को दिखने और खरीदने के लिए लाइव हैं</p>
+        </div>
+        <div class="farmer-only">
+          <button class="btn-list-mandi" style="padding: 0.5rem 1rem; font-size: 0.85rem;" onclick="window.app.switchTab('scanner')">
+            <span>🌾</span> Nayi Fasal Scan Karke Mandi Me Dalein
+          </button>
+        </div>
+      </div>
+
+      <!-- Controls Bar -->
+      <div class="mandi-controls-bar">
+        <div class="mandi-filters-group">
+          <button class="mandi-filter-btn active" data-filter="all">Sabhi Fasal</button>
+          <button class="mandi-filter-btn" data-filter="wheat">🌾 Gehu</button>
+          <button class="mandi-filter-btn" data-filter="tomato">🍅 Tamatar</button>
+          <button class="mandi-filter-btn" data-filter="mustard">🌼 Sarson</button>
+        </div>
+
+        <div style="display: flex; gap: 0.5rem; flex: 1; justify-content: flex-end; flex-wrap: wrap;">
+          <div class="mandi-search-box">
+            <input type="text" id="mandi-search-input" class="mandi-input" placeholder="🔍 Fasal ya Mandi khojein...">
+          </div>
+        </div>
+      </div>
+
+      <!-- Listings Grid -->
+      <div id="mandi-listings-grid" class="mandi-grid"></div>
+    </section>
+
+    <!-- -----------------------------------------------------------------------
+         TAB: Mere Orders (थोक व्यापारियों द्वारा खरीदे गए ऑर्डर)
+         ----------------------------------------------------------------------- -->
+    <section id="section-orders" class="app-section">
+      <div class="section-hero">
+        <div class="section-hero-title">
+          <h2>📦 Meri Fasal Ke Wholesale Orders (व्यापारियों से मिले ऑर्डर्स)</h2>
+          <p>थोक व्यापारियों द्वारा बुक किए गए ऑर्डर, उनका पूरा डिलीवरी पता, फोन नंबर व भुगतान माध्यम (रियल-टाइम अपडेट)</p>
+        </div>
+      </div>
+
+      <!-- Farmer Orders KPI Summary -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+        <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); padding: 1rem 1.25rem; border-radius: var(--radius-md);">
+          <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.35rem;">📦 Kul Prapt Orders:</div>
+          <div id="farmer-summary-orders" style="font-size: 1.8rem; font-weight: 900; color: #ffffff;">0</div>
+        </div>
+        <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); padding: 1rem 1.25rem; border-radius: var(--radius-md);">
+          <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.35rem;">🌾 Kul Bika Maal (Quantity):</div>
+          <div id="farmer-summary-qty" style="font-size: 1.8rem; font-weight: 900; color: var(--accent-emerald);">0 Qtl</div>
+        </div>
+        <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); padding: 1rem 1.25rem; border-radius: var(--radius-md);">
+          <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.35rem;">💰 Kul Mandi Bikri (Revenue):</div>
+          <div id="farmer-summary-val" style="font-size: 1.8rem; font-weight: 900; color: var(--accent-gold);">₹0</div>
+        </div>
+      </div>
+
+      <!-- Farmer Orders Container -->
+      <div id="farmer-orders-container" style="display: flex; flex-direction: column; gap: 1rem;">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- -----------------------------------------------------------------------
+         TAB 4: Telegram Alerts & Remote Pump Control
+         ----------------------------------------------------------------------- -->
+    <section id="section-alerts" class="app-section">
+      <div class="section-hero">
+        <div class="section-hero-title">
+          <h2>📲 Telegram Alerts & Remote Pump Control</h2>
+          <p>मिट्टी की नमी कम होने पर फोटो के साथ अलर्ट और Telegram से मोटर पंप चालू/बंद नियंत्रण</p>
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+          <button class="btn-primary-scan" onclick="window.telegramBotManager.openSetupModal()" style="padding: 0.4rem 0.85rem; font-size: 0.8rem; background: #229ED9;">
+            ⚙️ Telegram Bot Settings
+          </button>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem;">
+        <!-- Telegram Status Card -->
+        <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 1.5rem;">
+          <h3 style="font-size: 1.1rem; font-weight: 800; color: #ffffff; margin-bottom: 1rem;">
+            ✈️ Telegram Bot & Remote Commands
+          </h3>
+
+          <div style="display: flex; flex-direction: column; gap: 1rem;">
+            <div style="background: var(--bg-surface-elevated); padding: 1rem; border-radius: var(--radius-md); border: 1px solid rgba(34, 158, 217, 0.4);">
+              <div style="font-weight: 800; color: #ffffff; margin-bottom: 0.25rem;">Telegram Connection:</div>
+              <div id="tg-status-indicator" class="badge-status-ready" style="margin-bottom: 0.75rem;">
+                🟢 Telegram Bot: Connected
+              </div>
+              <div style="font-size: 0.8rem; color: #a7f3d0; line-height: 1.5;">
+                👉 <b>Telegram me commands bhejein:</b><br>
+                • <code>/pump_on</code> - खेत का मोटर पंप चालू करें<br>
+                • <code>/pump_off</code> - मोटर पंप बंद करें<br>
+                • <code>/status</code> - खेत की लाइव रिपोर्ट
+              </div>
+            </div>
+
+            <div style="display: flex; align-items: center; justify-content: space-between; background: var(--bg-surface-elevated); padding: 0.85rem; border-radius: var(--radius-md);">
+              <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <span style="font-size: 1.5rem;">🔊</span>
+                <div>
+                  <div style="font-weight: 700; color: #ffffff;">Audio Siren & Voice Alert</div>
+                  <div style="font-size: 0.75rem; color: var(--text-secondary);">नमी कम होने पर आवाज़ से अलर्ट</div>
+                </div>
+              </div>
+              <button class="btn-pump btn-pump-off" onclick="window.notificationManager.playChime('warning')">
+                Test Chime
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Notifications Feed -->
+        <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 1.5rem;">
+          <h3 style="font-size: 1.1rem; font-weight: 800; color: #ffffff; margin-bottom: 1rem;">
+            📜 Live Notification Feed
+          </h3>
+          <div id="notif-list-items" style="display: flex; flex-direction: column; gap: 0.75rem;"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- -----------------------------------------------------------------------
+         TAB 5: IoT AI Hardware & Code Architect
+         ----------------------------------------------------------------------- -->
+    <section id="section-hardware" class="app-section">
+      <div class="section-hero">
+        <div class="section-hero-title">
+          <h2>🛠️ Surya IoT AI Architect (सर्किट कनेक्शन व Arduino कोड AI)</h2>
+          <p>किसी भी नए सेंसर का सटीक पिन कनेक्शन (Wiring) और चलाने के लिए प्रोडक्शन-रेडी C++ कोड पाएं</p>
+        </div>
+      </div>
+      <div id="ai-architect-container"></div>
+    </section>
+
+  </main>
+
+  <!-- Side Notification Drawer -->
+  <aside id="notif-drawer" class="notif-drawer-panel">
+    <div class="drawer-header">
+      <div class="drawer-title">🔔 Kisan Phone Alerts</div>
+      <button id="btn-close-notif-drawer" class="btn-close-modal">✕</button>
+    </div>
+    <div class="drawer-body">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+        <span style="font-size: 0.75rem; color: var(--text-secondary);">Direct WhatsApp & Push Stream</span>
+        <button onclick="window.notificationManager.markAllAsRead()" style="background: none; border: none; color: var(--accent-emerald); font-size: 0.75rem; cursor: pointer;">
+          Mark all as read
+        </button>
+      </div>
+      <div id="drawer-notif-list" style="display: flex; flex-direction: column; gap: 0.75rem;"></div>
+    </div>
+  </aside>
+
+  <!-- MODALS -->
+
+  <!-- 1. Add Field Node Modal -->
+  <div id="add-node-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">➕ Naya IoT Sensor Node Jodein</h3>
+        <button class="btn-close-modal" onclick="document.getElementById('add-node-modal').style.display='none'">✕</button>
+      </div>
+
+      <!-- Quick Preset Selection for Farmer -->
+      <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); padding: 0.85rem; border-radius: var(--radius-md); margin-bottom: 1.25rem;">
+        <label class="form-label" style="margin-bottom: 0.5rem; color: var(--accent-gold);">⚡ 1-Click Fast Presets (नोड का चयन करें):</label>
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+          <button type="button" class="btn-secondary-upload" style="font-size: 0.78rem; padding: 0.35rem 0.65rem;" onclick="fillNodePreset('camera')">
+            📷 10-Min Live Camera Node
+          </button>
+          <button type="button" class="btn-secondary-upload" style="font-size: 0.78rem; padding: 0.35rem 0.65rem;" onclick="fillNodePreset('moisture')">
+            💧 Soil Moisture & Pump Node
+          </button>
+          <button type="button" class="btn-secondary-upload" style="font-size: 0.78rem; padding: 0.35rem 0.65rem;" onclick="fillNodePreset('temperature')">
+            🌡️ Field Temperature Node
+          </button>
+          <button type="button" class="btn-secondary-upload" style="font-size: 0.78rem; padding: 0.35rem 0.65rem;" onclick="fillNodePreset('air')">
+            💨 Air Quality & AQI Node
+          </button>
+          <button type="button" class="btn-secondary-upload" style="font-size: 0.78rem; padding: 0.35rem 0.65rem;" onclick="fillNodePreset('npk')">
+            🧪 NPK 7-in-1 Soil Node
+          </button>
+        </div>
+      </div>
+
+      <form id="add-node-form">
+        <div class="form-group">
+          <label class="form-label">Node Ka Naam (Title):</label>
+          <input type="text" id="new-node-name" class="form-input" placeholder="e.g. Node 1: Live Canopy Camera Scanner" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Sensor Prakaar (Type):</label>
+            <select id="new-node-type" class="form-select">
+              <option value="camera-telegram">📷 ESP32-CAM Telegram Photo Node</option>
+              <option value="moisture-pump">💧 Soil Moisture & Pump Controller</option>
+              <option value="temperature">🌡️ Field Temperature Sensor</option>
+              <option value="air-temp">💨 Air Quality (MQ-135) + Weather</option>
+              <option value="npk-rs485">🧪 NPK 7-in-1 Soil Nutrient (RS485)</option>
+              <option value="water-tank">🚰 Ultrasonic Water Tank Level</option>
+              <option value="custom">⚡ Anya Custom Sensor</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Microcontroller Board:</label>
+            <select id="new-node-board" class="form-select">
+              <option value="ESP32 WROOM / DevKit v1">ESP32 WROOM / DevKit v1</option>
+              <option value="ESP32-CAM (AI-Thinker)">ESP32-CAM (AI-Thinker)</option>
+              <option value="NodeMCU ESP8266">NodeMCU ESP8266</option>
+              <option value="Arduino Uno / Nano">Arduino Uno / Nano</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Reading Label (माप का नाम):</label>
+            <input type="text" id="new-node-metric-label" class="form-input" placeholder="e.g. Nitrogen (N) mg/kg" value="Sensor Broadcast">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Initial Value (मान):</label>
+            <input type="text" id="new-node-metric-val" class="form-input" placeholder="e.g. 48 mg/kg" value="Normal & Optimal">
+          </div>
+        </div>
+
+        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid var(--accent-emerald); border-radius: var(--radius-sm); padding: 0.75rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between;">
+          <div style="font-size: 0.8rem; color: #a7f3d0;">
+            🤖 <strong>Circuit Wiring & Arduino Code chahiye?</strong><br>
+            AI तुरंत पिन कनेक्शन और C++ कोड बनाकर देगा।
+          </div>
+          <button type="button" class="btn-primary-scan" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;" onclick="document.getElementById('add-node-modal').style.display='none'; window.app.switchTab('hardware');">
+            Open AI Architect
+          </button>
+        </div>
+
+        <button type="submit" class="btn-submit-modal">🚀 Add Node to Mera Khet</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. AI Auto-Listing Modal (Shop Pe Dalein) -->
+  <div id="auto-listing-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">🌾 Surya Mandi Me Fasal List Karein</h3>
+        <button class="btn-close-modal" onclick="window.marketplaceManager.closeAutoListingModal()">✕</button>
+      </div>
+      <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid var(--accent-emerald); border-radius: var(--radius-sm); padding: 0.6rem 0.85rem; font-size: 0.8rem; color: #34d399; margin-bottom: 1rem;">
+        ✨ AI ने आपकी फसल की गुणवत्ता, नमी व ग्रेड स्वचालित रूप से भर दिया है!
+      </div>
+      <form id="auto-listing-form">
+        <input type="hidden" id="list-image-url">
+        <div class="form-group">
+          <label class="form-label">Listing Title (शीर्षक):</label>
+          <input type="text" id="list-crop-title" class="form-input" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Fasal (Crop):</label>
+            <input type="text" id="list-crop-type" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Variety (किस्म):</label>
+            <input type="text" id="list-crop-variety" class="form-input" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">AI Certified Grade:</label>
+            <input type="text" id="list-ai-grade" class="form-input" readonly style="color: var(--accent-gold); font-weight: 800;">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Health & Maturity:</label>
+            <input type="text" id="list-ai-score" class="form-input" readonly>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Kul Matra (Total Quantity in Quintals):</label>
+            <input type="number" id="list-quantity" class="form-input" value="50" min="1" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Min Wholesale Order (Qtl):</label>
+            <input type="number" id="list-min-order" class="form-input" value="10" min="1" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Mandi Bhao (Price ₹ per Quintal):</label>
+          <input type="number" id="list-price" class="form-input" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Kisan Ka Naam:</label>
+            <input type="text" id="list-farmer-name" class="form-input" value="Rameshwar Patel (किसान)" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phone / WhatsApp Number:</label>
+            <input type="text" id="list-farmer-phone" class="form-input" value="+91 98765 43210" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Mandi / Location (खेत का स्थान):</label>
+          <input type="text" id="list-location" class="form-input" value="Sehore Mandi, Madhya Pradesh" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">AI Diagnostic & Quality Notes:</label>
+          <textarea id="list-ai-notes" class="form-textarea" rows="2" readonly></textarea>
+        </div>
+        <button type="submit" class="btn-submit-modal" style="background: var(--accent-gold); color: #000;">
+          🛒 Mandi Me Listing Publish Karein
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 3. Wholesale Order Modal -->
+  <div id="order-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">🏢 Thok Vyapari Purchase Order</h3>
+        <button class="btn-close-modal" onclick="window.marketplaceManager.closeOrderModal()">✕</button>
+      </div>
+      <form id="wholesale-order-form">
+        <input type="hidden" id="order-listing-id">
+        <div style="background: var(--bg-surface-elevated); padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1rem;">
+          <h4 id="order-title" style="color: #ffffff; font-size: 1.05rem; margin-bottom: 0.25rem;">Crop Title</h4>
+          <div id="order-farmer" style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.4rem;">Farmer Info</div>
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span id="order-rate" style="font-size: 1.25rem; font-weight: 800; color: var(--accent-gold);">Rate</span>
+            <span id="order-max-qty" style="font-size: 0.8rem; color: var(--accent-emerald);">Stock Available</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Kharid Matra (Quantity in Quintals):</label>
+          <input type="number" id="order-quantity-input" class="form-input" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Vyapari Ka Naam (Trader Name):</label>
+            <input type="text" id="buyer-name" class="form-input" value="Rajesh Agarwal" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Firm / Agency Ka Naam:</label>
+            <input type="text" id="buyer-firm" class="form-input" value="Agarwal Agro Trading Co." required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Phone / WhatsApp Number:</label>
+          <input type="text" id="buyer-phone" class="form-input" value="+91 98111 22334" required>
+        </div>
+
+        <div style="background: rgba(245, 158, 11, 0.15); border: 1px solid var(--accent-gold); padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-weight: 700; color: #ffffff;">Kul Mandi Raashi (Total Amount):</span>
+          <span id="order-total-amount" style="font-size: 1.5rem; font-weight: 900; color: var(--accent-gold);">₹0</span>
+        </div>
+
+        <button type="submit" class="btn-submit-modal" style="background: var(--accent-gold); color: #000;">
+          📝 Confirm Purchase Order (Book Fasal)
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 4. Order Confirmation Slip Modal -->
+  <div id="order-slip-modal" class="modal-overlay">
+    <div class="modal-card" style="max-width: 650px;">
+      <div id="order-slip-content"></div>
+    </div>
+  </div>
+
+  <!-- 5. AI Quality Certificate Modal -->
+  <div id="cert-modal" class="modal-overlay">
+    <div class="modal-card" style="max-width: 650px;">
+      <div id="cert-modal-body"></div>
+    </div>
+  </div>
+
+  <!-- 6. Telegram Bot Setup Modal -->
+  <div id="telegram-setup-modal" class="modal-overlay">
+    <div class="modal-card" style="max-width: 550px;">
+      <div class="modal-header">
+        <h3 class="modal-title">✈️ Telegram Bot Setup (फोटो अलर्ट हेतु)</h3>
+        <button class="btn-close-modal" onclick="window.telegramBotManager.closeSetupModal()">✕</button>
+      </div>
+
+      <div style="background: rgba(34, 158, 217, 0.12); border: 1px solid rgba(34, 158, 217, 0.4); padding: 0.85rem; border-radius: var(--radius-md); font-size: 0.82rem; color: #93c5fd; margin-bottom: 1.25rem; line-height: 1.5;">
+        <strong>💡 1 मिनट में सेटअप कैसे करें:</strong><br>
+        1. Telegram पर <b>@BotFather</b> सर्च करके <code>/newbot</code> भेजें और <b>Bot Token</b> कॉपी करें।<br>
+        2. Telegram पर <b>@userinfobot</b> को <code>/start</code> भेजकर अपनी <b>Chat ID</b> (संख्या) देखें।<br>
+        3. दोनों को नीचे भरकर "Save & Test Photo" दबाएं!
+      </div>
+
+      <form id="telegram-setup-form" onsubmit="window.telegramBotManager.saveFromForm(event)">
+        <div class="form-group">
+          <label class="form-label">Telegram Bot Token:</label>
+          <input type="text" id="tg-bot-token" class="form-input" placeholder="e.g. 7123456789:AAFlmQk... (BotFather se prapt)" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Aapki Telegram Chat ID:</label>
+          <input type="text" id="tg-chat-id" class="form-input" placeholder="e.g. 1234567890 (UserInfoBot se prapt)" required>
+        </div>
+
+        <div style="display: flex; gap: 0.75rem; margin-top: 1.25rem;">
+          <button type="submit" class="btn-submit-modal" style="background: #229ED9; color: #ffffff;">
+            💾 Save & Send Test Photo
+          </button>
+          <button type="button" class="btn-scan-again" onclick="window.telegramBotManager.closeSetupModal()">
+            Radd Karein (Cancel)
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Floating Toast Notifications Container -->
+  <div id="toast-container"></div>
+
+  <!-- Scripts -->
+  <script src="js/demoData.js"></script>
+  <script src="js/notifications.js"></script>
+  <script src="js/iotNodes.js"></script>
+  <script src="js/aiScanner.js"></script>
+  <script src="js/marketplace.js"></script>
+  <script src="js/telegramBot.js"></script>
+  <script src="js/iotAiArchitect.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/pwaInstaller.js"></script>
+  <script>
+    function fillNodePreset(preset) {
+      const nameInput = document.getElementById('new-node-name');
+      const typeInput = document.getElementById('new-node-type');
+      const boardInput = document.getElementById('new-node-board');
+      const labelInput = document.getElementById('new-node-metric-label');
+      const valInput = document.getElementById('new-node-metric-val');
+
+      if (preset === 'camera') {
+        nameInput.value = "Node 1: ESP32-CAM (10-Min Live Scan)";
+        typeInput.value = "camera-telegram";
+        boardInput.value = "ESP32-CAM (AI-Thinker)";
+        labelInput.value = "Camera Sweep Status";
+        valInput.value = "10-Min Auto Scan Active";
+      } else if (preset === 'moisture') {
+        nameInput.value = "Node 2: Root-zone Moisture & Motor Pump";
+        typeInput.value = "moisture-pump";
+        boardInput.value = "ESP32 WROOM / DevKit v1";
+        labelInput.value = "Soil Moisture %";
+        valInput.value = "22% (Low / Dry)";
+      } else if (preset === 'temperature') {
+        nameInput.value = "Node 3: Field Ambient Temperature";
+        typeInput.value = "temperature";
+        boardInput.value = "ESP32 WROOM / DevKit v1";
+        labelInput.value = "Khet Ka Tapman";
+        valInput.value = "28.2°C";
+      } else if (preset === 'air') {
+        nameInput.value = "Node 4: Air Quality (AQI) & Humidity";
+        typeInput.value = "air-temp";
+        boardInput.value = "ESP32 WROOM / DevKit v1";
+        labelInput.value = "Air Quality AQI";
+        valInput.value = "48 (Good / Clean)";
+      } else if (preset === 'npk') {
+        nameInput.value = "Node 5: NPK 7-in-1 Soil Nutrient";
+        typeInput.value = "npk-rs485";
+        boardInput.value = "ESP32 WROOM / DevKit v1";
+        labelInput.value = "Nitrogen / Phosphorus / Potassium";
+        valInput.value = "N: 48, P: 28, K: 180 mg/kg";
+      }
+    }
+  </script>
+</body>
+</html>
+
