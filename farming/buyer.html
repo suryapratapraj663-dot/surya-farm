@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>SURYA VYAPARI (सूर्य व्यापारी) - Wholesale B2B Mandi & AI Quality Certified Produce</title>
+  <meta name="description" content="थोक व्यापारी ऐप: AI द्वारा प्रमाणित ग्रेड A+ फसलें, डिजिटल खरीद पर्ची व किसान से सीधा संपर्क">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="manifest" href="manifest_buyer.json">
+  <link rel="icon" type="image/png" href="icons/buyer-192.png">
+  <link rel="apple-touch-icon" href="icons/buyer-192.png">
+  <meta name="theme-color" content="#f59e0b">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+<body class="role-trader">
+
+  <!-- =========================================================================
+       Wholesaler Top Header
+       ========================================================================= -->
+  <header class="app-header">
+    <div class="brand-group">
+      <div class="brand-logo-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">🏢</div>
+      <div class="brand-text">
+        <h1>SURYA VYAPARI APP</h1>
+        <div class="brand-subtitle" style="color: var(--accent-gold);">सूर्य व्यापारी &bull; B2B डिजिटल थोक मंडी</div>
+      </div>
+    </div>
+
+    <!-- Active Trader Account Pill (Clickable to Edit) -->
+    <div class="header-center">
+      <div id="header-trader-pill" class="role-badge-pill pill-trader" style="cursor: pointer; display: flex; align-items: center; gap: 0.5rem; border: 1px solid var(--accent-gold);" onclick="window.buyerApp.openAccountModal()" title="Vyapari account विवरण देखें या बदलें">
+        <span>🏢</span>
+        <strong id="header-firm-name">Agarwal Agro Trading Co.</strong>
+        <span style="opacity: 0.5;">|</span>
+        <span id="header-trader-name">Rajesh Agarwal</span>
+        <span style="opacity: 0.5;">|</span>
+        <span id="header-trader-phone" style="color: var(--accent-gold);">📞 +91 98111 22334</span>
+        <span style="background: rgba(245, 158, 11, 0.25); color: #fbbf24; font-size: 0.7rem; padding: 0.15rem 0.45rem; border-radius: 999px; margin-left: 0.25rem;">✏️ Edit</span>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <!-- Edit/Add Account Button -->
+      <button class="btn-primary-scan" style="padding: 0.35rem 0.85rem; font-size: 0.82rem; background: var(--accent-gold); color: #000; font-weight: 700;" onclick="window.buyerApp.openAccountModal()" title="Apna Vyapari Khata Jodein ya Badlein">
+        👤 Khata Badlein
+      </button>
+
+      <!-- Switch to Farmer App link -->
+      <a href="farmer.html" class="btn-secondary-upload" style="padding: 0.35rem 0.85rem; font-size: 0.8rem; text-decoration: none; border-color: var(--accent-emerald); color: #34d399;" title="Open Farmer Smart IoT App">
+        👨‍🌾 किसान ऐप ↗
+      </a>
+
+      <!-- Notification Bell -->
+      <button id="btn-bell-toggle" class="btn-icon-header" title="Mandi Notifications">
+        🔔
+        <span id="notif-badge" class="badge-counter" style="display: none;">0</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- =========================================================================
+       Wholesaler Navigation Tabs Bar
+       ========================================================================= -->
+  <nav class="nav-tabs-bar">
+    <button class="nav-tab-btn active" data-tab="mandi">
+      <span>🛒</span> Surya Wholesale Mandi (थोक बाजार)
+    </button>
+    <button class="nav-tab-btn" data-tab="orders">
+      <span>📋</span> Mere Orders (खरीद पर्ची)
+      <span id="nav-orders-count" style="margin-left: 0.35rem; background: var(--accent-gold); color: #000; font-weight: 800; font-size: 0.72rem; padding: 0.1rem 0.4rem; border-radius: 999px;">0</span>
+    </button>
+    <button class="nav-tab-btn" data-tab="profile">
+      <span>👤</span> Vyapari Profile (फर्म विवरण)
+    </button>
+  </nav>
+
+  <!-- =========================================================================
+       Main Application Container
+       ========================================================================= -->
+  <main class="app-main-content">
+
+    <!-- -----------------------------------------------------------------------
+         TAB 1: Surya Wholesale Mandi (थोक बाजार)
+         ----------------------------------------------------------------------- -->
+    <section id="section-mandi" class="app-section active-section">
+      <div class="section-hero">
+        <div class="section-hero-title">
+          <h2>🛒 Surya Wholesale Mandi &bull; प्रमाणित फसलें</h2>
+          <p>AI द्वारा ग्रेडिंग (Grade A+) व खेत के नोड सेंसर से सत्यापित फसलें सीधे किसानों से खरीदें</p>
+        </div>
+        <div style="background: rgba(245, 158, 11, 0.15); border: 1px solid var(--accent-gold); padding: 0.5rem 1rem; border-radius: var(--radius-md); font-size: 0.85rem; color: #fbbf24; font-weight: 700;">
+          🛡️ 100% Verified Quality & Direct Kisan Connect
+        </div>
+      </div>
+
+      <!-- Controls & Filters Bar -->
+      <div class="mandi-controls-bar">
+        <div class="mandi-filters-group">
+          <button class="mandi-filter-btn active" data-filter="all">Sabhi (All)</button>
+          <button class="mandi-filter-btn" data-filter="wheat">🌾 Gehu (Wheat)</button>
+          <button class="mandi-filter-btn" data-filter="tomato">🍅 Tamatar (Tomato)</button>
+          <button class="mandi-filter-btn" data-filter="mustard">🌼 Sarson (Mustard)</button>
+          <button class="mandi-filter-btn" data-filter="rice">🍚 Dhaan (Rice)</button>
+        </div>
+
+        <div style="display: flex; gap: 0.5rem; flex: 1; justify-content: flex-end; flex-wrap: wrap;">
+          <div class="mandi-search-box">
+            <input type="text" id="mandi-search-input" class="mandi-input" placeholder="🔍 Mandi, Kisan, ya Fasal khojein...">
+          </div>
+          <select id="mandi-grade-select" class="mandi-select" title="Filter by AI Certified Grade">
+            <option value="all">Sabhi Grades</option>
+            <option value="Grade A+">Grade A+ (प्रीमियम एक्सपोर्ट)</option>
+            <option value="Grade A">Grade A (मानक)</option>
+            <option value="Grade B">Grade B (मध्यम)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Listings Grid -->
+      <div id="mandi-listings-grid" class="mandi-grid"></div>
+    </section>
+
+    <!-- -----------------------------------------------------------------------
+         TAB 2: Mere Orders (Booked Wholesale Lots & Invoices)
+         ----------------------------------------------------------------------- -->
+    <section id="section-orders" class="app-section">
+      <div class="section-hero">
+        <div class="section-hero-title">
+          <h2>📋 Mere Wholesale Orders (खरीद पर्चियां व अनुबंध)</h2>
+          <p>आपके द्वारा बुक की गई थोक फसलों के डिजिटल अनुबंध, रसीदें व किसान संपर्क विवरण (स्थायी रूप से सुरक्षित)</p>
+        </div>
+        <button class="btn-primary-scan" style="padding: 0.5rem 1rem; font-size: 0.85rem; background: var(--accent-gold); color: #000;" onclick="window.buyerApp.switchTab('mandi')">
+          🛒 Nayi Fasal Kharidein
+        </button>
+      </div>
+
+      <!-- Orders Summary KPI Cards -->
+      <div id="orders-summary-bar" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+        <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); padding: 1rem 1.25rem; border-radius: var(--radius-md);">
+          <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.35rem;">📦 Kul Wholesale Orders:</div>
+          <div id="summary-total-orders" style="font-size: 1.8rem; font-weight: 900; color: #ffffff;">0</div>
+        </div>
+        <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); padding: 1rem 1.25rem; border-radius: var(--radius-md);">
+          <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.35rem;">🌾 Kul Matra (Total Quantity):</div>
+          <div id="summary-total-qty" style="font-size: 1.8rem; font-weight: 900; color: var(--accent-emerald);">0 Qtl</div>
+        </div>
+        <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); padding: 1rem 1.25rem; border-radius: var(--radius-md);">
+          <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.35rem;">💰 Kul Mandi Raashi (Total Value):</div>
+          <div id="summary-total-val" style="font-size: 1.8rem; font-weight: 900; color: var(--accent-gold);">₹0</div>
+        </div>
+      </div>
+
+      <!-- Orders List Container -->
+      <div id="buyer-orders-container" style="display: flex; flex-direction: column; gap: 1rem;">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- -----------------------------------------------------------------------
+         TAB 3: Vyapari Profile & Mandi License
+         ----------------------------------------------------------------------- -->
+    <section id="section-profile" class="app-section">
+      <div class="section-hero">
+        <div class="section-hero-title">
+          <h2>👤 Vyapari Profile & Mandi License (व्यापारी खाता)</h2>
+          <p>आपकी व्यापारिक फर्म, मोबाइल नंबर, APMC लाइसेंस, GSTIN व भुगतान विवरण</p>
+        </div>
+        <button class="btn-primary-scan" style="padding: 0.5rem 1.25rem; font-size: 0.85rem; background: var(--accent-gold); color: #000; font-weight: 700;" onclick="window.buyerApp.openAccountModal()">
+          ✏️ Khata Update Karein
+        </button>
+      </div>
+
+      <div style="max-width: 700px; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 1.75rem;">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 1.25rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+          <div style="display: flex; align-items: center; gap: 1rem;">
+            <div style="width: 64px; height: 64px; border-radius: var(--radius-full); background: var(--bg-surface-elevated); border: 2px solid var(--accent-gold); display: flex; align-items: center; justify-content: center; font-size: 2.2rem;">
+              🏢
+            </div>
+            <div>
+              <h3 id="profile-firm-display" style="font-size: 1.35rem; font-weight: 800; color: #ffffff; margin-bottom: 0.25rem;">Agarwal Agro Trading Co.</h3>
+              <span style="font-size: 0.85rem; color: var(--accent-gold); font-weight: 700;">✅ Verified APMC Wholesale Buyer &bull; Grade A License</span>
+            </div>
+          </div>
+          <button class="btn-secondary-upload" style="font-size: 0.8rem; padding: 0.4rem 0.85rem;" onclick="window.buyerApp.openAccountModal()">
+            ✏️ Edit Details
+          </button>
+        </div>
+
+        <div class="specs-grid" style="margin-bottom: 1.75rem;">
+          <div class="spec-item">
+            <span class="spec-label">👤 Authorized Trader (व्यापारी):</span>
+            <span id="profile-name-display" class="spec-val">Rajesh Agarwal</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">📞 Mobile / WhatsApp:</span>
+            <span id="profile-phone-display" class="spec-val" style="color: var(--accent-gold); font-weight: 700;">+91 98111 22334</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">📍 Operating Mandi / City:</span>
+            <span id="profile-mandi-display" class="spec-val">APMC Grain Market (Indore / Sehore)</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">📜 APMC License / GSTIN:</span>
+            <span id="profile-license-display" class="spec-val">APMC-IND-2024-8841</span>
+          </div>
+          <div class="spec-item" style="grid-column: 1 / -1;">
+            <span class="spec-label">📍 Delivery Pata (Godown Address):</span>
+            <span id="profile-address-display" class="spec-val">Shop No. 42, B-Block, APMC Anaj Mandi Yard, Indore, MP - 452001</span>
+          </div>
+          <div class="spec-item" style="grid-column: 1 / -1;">
+            <span class="spec-label">💳 Bhugtan Madhyam (Payment Mode):</span>
+            <span id="profile-payment-display" class="spec-val text-emerald">Direct Bank Transfer (NEFT/RTGS) & Mandi Escrow</span>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+          <button class="btn-primary-scan" style="flex: 1; justify-content: center; background: var(--accent-gold); color: #000;" onclick="window.buyerApp.openAccountModal()">
+            ✏️ Apna Phone Number / Khata Badlein
+          </button>
+          <button class="btn-list-mandi" style="flex: 1; justify-content: center;" onclick="window.buyerApp.switchTab('mandi')">
+            🛒 Mandi Me Fasal Kharidein
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Side Notification Drawer -->
+  <aside id="notif-drawer" class="notif-drawer-panel">
+    <div class="drawer-header">
+      <div class="drawer-title">🔔 Mandi Notifications</div>
+      <button id="btn-close-notif-drawer" class="btn-close-modal">✕</button>
+    </div>
+    <div class="drawer-body">
+      <div id="drawer-notif-list" style="display: flex; flex-direction: column; gap: 0.75rem;"></div>
+    </div>
+  </aside>
+
+  <!-- MODALS -->
+
+  <!-- 1. Add / Edit Vyapari Account Modal -->
+  <div id="buyer-account-modal" class="modal-overlay">
+    <div class="modal-card" style="max-width: 550px;">
+      <div class="modal-header">
+        <h3 class="modal-title">🏢 Vyapari Khata (व्यापारी खाता जोड़ें / बदलें)</h3>
+        <button class="btn-close-modal" onclick="window.buyerApp.closeAccountModal()">✕</button>
+      </div>
+
+      <div style="background: rgba(245, 158, 11, 0.12); border: 1px solid var(--accent-gold); padding: 0.75rem 1rem; border-radius: var(--radius-md); font-size: 0.85rem; color: #fbbf24; margin-bottom: 1.25rem; line-height: 1.5;">
+        💡 <strong>व्यापारी विवरण सुरक्षित करें:</strong><br>
+        यहाँ अपना और फर्म का नाम तथा <b>मोबाइल नंबर</b> जोड़ें। यह विवरण आपकी सभी थोक खरीद पर्चियों व ऑर्डर में अपने-आप जुड़ जाएगा।
+      </div>
+
+      <form id="buyer-account-form" onsubmit="window.buyerApp.saveAccount(event)">
+        <div class="form-group">
+          <label class="form-label">🏢 Firm / Agency / Dukaan Ka Naam:</label>
+          <input type="text" id="acc-firm-input" class="form-input" placeholder="e.g. Agarwal Agro Trading Co." required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">👤 Vyapari Ka Naam (Trader Name):</label>
+            <input type="text" id="acc-name-input" class="form-input" placeholder="e.g. Rajesh Agarwal" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">📞 Mobile / WhatsApp Number:</label>
+            <input type="text" id="acc-phone-input" class="form-input" placeholder="e.g. +91 98111 22334" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">📍 Operating Mandi / Shahar (स्थान):</label>
+          <input type="text" id="acc-mandi-input" class="form-input" placeholder="e.g. APMC Grain Market (Indore / Sehore)" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">🏠 Pura Pata / Delivery Godown Address (पूरा पता):</label>
+          <textarea id="acc-address-input" class="form-textarea" rows="2" placeholder="e.g. Shop No. 42, B-Block, APMC Anaj Mandi Yard, Bypass Road, Indore, MP - 452001" required></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">📜 APMC License / GSTIN Number:</label>
+            <input type="text" id="acc-license-input" class="form-input" placeholder="e.g. APMC-IND-2024-8841" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">💳 Bhugtan Madhyam (Payment Mode):</label>
+            <select id="acc-payment-input" class="form-select">
+              <option value="Direct Bank Transfer (NEFT/RTGS) & Mandi Escrow">Direct Bank Transfer (NEFT/RTGS)</option>
+              <option value="UPI / Instant IMPS">UPI / Instant IMPS</option>
+              <option value="APMC Mandi Cheque Settlement">APMC Mandi Cheque Settlement</option>
+              <option value="Cash on Delivery / Pickup Mandi">Cash on Mandi Pickup</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 0.75rem; margin-top: 1.25rem;">
+          <button type="submit" class="btn-submit-modal" style="background: var(--accent-gold); color: #000; font-weight: 700;">
+            💾 Save & Update Vyapari Profile
+          </button>
+          <button type="button" class="btn-scan-again" onclick="window.buyerApp.closeAccountModal()">
+            Radd Karein (Cancel)
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. Wholesale Order Modal -->
+  <div id="order-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">🏢 Thok Vyapari Purchase Order</h3>
+        <button class="btn-close-modal" onclick="window.marketplaceManager.closeOrderModal()">✕</button>
+      </div>
+      <form id="wholesale-order-form">
+        <input type="hidden" id="order-listing-id">
+        <div style="background: var(--bg-surface-elevated); padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1rem;">
+          <h4 id="order-title" style="color: #ffffff; font-size: 1.05rem; margin-bottom: 0.25rem;">Crop Title</h4>
+          <div id="order-farmer" style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.4rem;">Farmer Info</div>
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span id="order-rate" style="font-size: 1.25rem; font-weight: 800; color: var(--accent-gold);">Rate</span>
+            <span id="order-max-qty" style="font-size: 0.8rem; color: var(--accent-emerald);">Stock Available</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Kharid Matra (Quantity in Quintals):</label>
+          <input type="number" id="order-quantity-input" class="form-input" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Vyapari Ka Naam (Trader Name):</label>
+            <input type="text" id="buyer-name" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Firm / Agency Ka Naam:</label>
+            <input type="text" id="buyer-firm" class="form-input" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">📞 Phone / WhatsApp Number:</label>
+          <input type="text" id="buyer-phone" class="form-input" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">📍 Delivery Pata / Godown Address (माल डिलीवरी का पूरा पता):</label>
+          <textarea id="buyer-address" class="form-textarea" rows="2" placeholder="e.g. Shop No. 42, B-Block, APMC Anaj Mandi Yard, Bypass Road, Indore, MP - 452001" required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">💳 Bhugtan Madhyam (Payment Method):</label>
+          <select id="order-payment-method" class="form-select" required>
+            <option value="Direct Bank Transfer (NEFT/RTGS)">Direct Bank Transfer (NEFT/RTGS)</option>
+            <option value="UPI / QR Code Advance">UPI / QR Code Instant Payment</option>
+            <option value="APMC Mandi Escrow Advance">APMC Mandi Escrow Advance (सत्यापित सुरक्षित)</option>
+            <option value="Cheque on Mandi Delivery">Cheque / RTGS on Mandi Delivery</option>
+            <option value="Cash on Mandi Pickup">Cash on Mandi Pickup (लोडिंग पर नकद)</option>
+          </select>
+        </div>
+
+        <div style="background: rgba(245, 158, 11, 0.15); border: 1px solid var(--accent-gold); padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-weight: 700; color: #ffffff;">Kul Mandi Raashi (Total Amount):</span>
+          <span id="order-total-amount" style="font-size: 1.5rem; font-weight: 900; color: var(--accent-gold);">₹0</span>
+        </div>
+
+        <button type="submit" class="btn-submit-modal" style="background: var(--accent-gold); color: #000; font-weight: 700;">
+          📝 Confirm Purchase Order (Book Fasal)
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 3. Order Confirmation Slip Modal -->
+  <div id="order-slip-modal" class="modal-overlay">
+    <div class="modal-card" style="max-width: 650px;">
+      <div id="order-slip-content"></div>
+    </div>
+  </div>
+
+  <!-- 4. AI Quality Certificate Modal -->
+  <div id="cert-modal" class="modal-overlay">
+    <div class="modal-card" style="max-width: 650px;">
+      <div id="cert-modal-body"></div>
+    </div>
+  </div>
+
+  <!-- Floating Toast Notifications Container -->
+  <div id="toast-container"></div>
+
+  <!-- Scripts -->
+  <script src="js/demoData.js"></script>
+  <script src="js/notifications.js"></script>
+  <script src="js/marketplace.js"></script>
+  <script src="js/pwaInstaller.js"></script>
+  <script>
+    // Wholesaler App Controller
+    class BuyerApp {
+      constructor() {
+        this.currentTab = 'mandi';
+        this.profile = this.loadProfile();
+        this.init();
+      }
+
+      loadProfile() {
+        if (window.marketplaceManager) {
+          return window.marketplaceManager.getBuyerProfile();
+        }
+        const saved = localStorage.getItem('surya_buyer_profile');
+        if (saved) {
+          try { return JSON.parse(saved); } catch(e) {}
+        }
+        return {
+          name: "Rajesh Agarwal",
+          firm: "Agarwal Agro Trading Co.",
+          phone: "+91 98111 22334",
+          mandi: "APMC Grain Market (Indore / Sehore)",
+          license: "APMC-IND-2024-8841",
+          paymentMode: "Direct Bank Transfer (NEFT/RTGS) & Mandi Escrow"
+        };
+      }
+
+      init() {
+        this.setupNavigation();
+        this.renderProfile();
+
+        if (window.marketplaceManager) {
+          window.marketplaceManager.init();
+          this.renderBuyerOrders();
+        }
+
+        // Hook into order submit to re-render orders tab and update summary
+        const orderForm = document.getElementById('wholesale-order-form');
+        if (orderForm) {
+          orderForm.addEventListener('submit', (e) => {
+            window.marketplaceManager.submitWholesaleOrder(e);
+            setTimeout(() => this.renderBuyerOrders(), 200);
+          });
+        }
+
+        // Notification drawer
+        const bellBtn = document.getElementById('btn-bell-toggle');
+        const drawer = document.getElementById('notif-drawer');
+        const drawerClose = document.getElementById('btn-close-notif-drawer');
+        if (bellBtn && drawer) {
+          bellBtn.addEventListener('click', () => drawer.classList.toggle('open'));
+        }
+        if (drawerClose && drawer) {
+          drawerClose.addEventListener('click', () => drawer.classList.remove('open'));
+        }
+
+        // Close modals on backdrop click
+        document.querySelectorAll('.modal-overlay').forEach(modal => {
+          modal.addEventListener('click', (e) => {
+            if (e.target === modal) modal.style.display = 'none';
+          });
+        });
+      }
+
+      renderProfile() {
+        const p = this.profile;
+
+        // Header updates
+        const headerFirm = document.getElementById('header-firm-name');
+        const headerName = document.getElementById('header-trader-name');
+        const headerPhone = document.getElementById('header-trader-phone');
+        if (headerFirm) headerFirm.textContent = p.firm || "Agarwal Agro Trading Co.";
+        if (headerName) headerName.textContent = p.name || "Rajesh Agarwal";
+        if (headerPhone) headerPhone.textContent = `📞 ${p.phone || '+91 98111 22334'}`;
+
+        // Profile Tab displays
+        const profFirm = document.getElementById('profile-firm-display');
+        const profName = document.getElementById('profile-name-display');
+        const profPhone = document.getElementById('profile-phone-display');
+        const profMandi = document.getElementById('profile-mandi-display');
+        const profAddress = document.getElementById('profile-address-display');
+        const profLicense = document.getElementById('profile-license-display');
+        const profPayment = document.getElementById('profile-payment-display');
+
+        if (profFirm) profFirm.textContent = p.firm;
+        if (profName) profName.textContent = p.name;
+        if (profPhone) profPhone.textContent = p.phone;
+        if (profMandi) profMandi.textContent = p.mandi;
+        if (profAddress) profAddress.textContent = p.address || "Shop No. 42, B-Block, APMC Anaj Mandi Yard, Indore, MP - 452001";
+        if (profLicense) profLicense.textContent = p.license;
+        if (profPayment) profPayment.textContent = p.paymentMode;
+      }
+
+      openAccountModal() {
+        const p = this.profile;
+        document.getElementById('acc-firm-input').value = p.firm || '';
+        document.getElementById('acc-name-input').value = p.name || '';
+        document.getElementById('acc-phone-input').value = p.phone || '';
+        document.getElementById('acc-mandi-input').value = p.mandi || '';
+        const addressEl = document.getElementById('acc-address-input');
+        if (addressEl) addressEl.value = p.address || 'Shop No. 42, B-Block, APMC Anaj Mandi Yard, Bypass Road, Indore, MP - 452001';
+        document.getElementById('acc-license-input').value = p.license || '';
+        document.getElementById('acc-payment-input').value = p.paymentMode || 'Direct Bank Transfer (NEFT/RTGS) & Mandi Escrow';
+
+        const modal = document.getElementById('buyer-account-modal');
+        if (modal) modal.style.display = 'flex';
+      }
+
+      closeAccountModal() {
+        const modal = document.getElementById('buyer-account-modal');
+        if (modal) modal.style.display = 'none';
+      }
+
+      saveAccount(e) {
+        e.preventDefault();
+        const updated = {
+          firm: document.getElementById('acc-firm-input').value.trim(),
+          name: document.getElementById('acc-name-input').value.trim(),
+          phone: document.getElementById('acc-phone-input').value.trim(),
+          mandi: document.getElementById('acc-mandi-input').value.trim(),
+          address: document.getElementById('acc-address-input') ? document.getElementById('acc-address-input').value.trim() : '',
+          license: document.getElementById('acc-license-input').value.trim(),
+          paymentMode: document.getElementById('acc-payment-input').value
+        };
+
+        this.profile = updated;
+        if (window.marketplaceManager) {
+          window.marketplaceManager.saveBuyerProfile(updated);
+        } else {
+          localStorage.setItem('surya_buyer_profile', JSON.stringify(updated));
+        }
+
+        this.renderProfile();
+        this.closeAccountModal();
+
+        if (window.notificationManager) {
+          window.notificationManager.triggerAlert({
+            type: 'success',
+            title: '🏢 Vyapari Khata Updated!',
+            message: `${updated.firm} (${updated.phone}) ka khata safaltapoorvak update ho gaya hai.`,
+            voiceText: 'Vyapari khata update ho gaya.'
+          });
+        }
+      }
+
+      setupNavigation() {
+        const navButtons = document.querySelectorAll('.nav-tab-btn');
+        navButtons.forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const tab = e.currentTarget.dataset.tab;
+            if (tab) this.switchTab(tab);
+          });
+        });
+      }
+
+      switchTab(tabId) {
+        this.currentTab = tabId;
+        document.querySelectorAll('.nav-tab-btn').forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.tab === tabId);
+        });
+        document.querySelectorAll('.app-section').forEach(sec => {
+          sec.classList.toggle('active-section', sec.id === `section-${tabId}`);
+        });
+        if (tabId === 'orders') {
+          this.renderBuyerOrders();
+        }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      renderBuyerOrders() {
+        const container = document.getElementById('buyer-orders-container');
+        if (!container || !window.marketplaceManager) return;
+
+        const orders = window.marketplaceManager.orders || [];
+
+        // Update nav badge count
+        const countBadge = document.getElementById('nav-orders-count');
+        if (countBadge) countBadge.textContent = orders.length;
+
+        // Update summary KPI bar
+        const totalOrdersEl = document.getElementById('summary-total-orders');
+        const totalQtyEl = document.getElementById('summary-total-qty');
+        const totalValEl = document.getElementById('summary-total-val');
+
+        const totalQty = orders.reduce((sum, o) => sum + (o.quantity || 0), 0);
+        const totalVal = orders.reduce((sum, o) => sum + (o.totalAmount || 0), 0);
+
+        if (totalOrdersEl) totalOrdersEl.textContent = `${orders.length} Orders`;
+        if (totalQtyEl) totalQtyEl.textContent = `${totalQty} Quintals`;
+        if (totalValEl) totalValEl.textContent = `₹${totalVal.toLocaleString('en-IN')}`;
+
+        if (orders.length === 0) {
+          container.innerHTML = `
+            <div class="empty-mandi-state">
+              <div class="empty-icon">📋</div>
+              <h3>Aapka koi pichla order save nahi hai</h3>
+              <p>Mandi me jaakar kisi bhi fasal par "Kharidein" click karein. Aapke sabhi orders aur receipt yahan hamesha ke liye save rahenge.</p>
+              <button class="btn-list-mandi" onclick="window.buyerApp.switchTab('mandi')" style="margin-top: 1rem;">
+                🛒 Browse Mandi Produce
+              </button>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = orders.map(ord => `
+          <div class="invoice-box" style="margin-bottom: 1.25rem;">
+            <div class="invoice-header">
+              <div class="inv-logo">🌾 Kharid Slip #${ord.orderId}</div>
+              <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <div class="badge-status-ready">STATUS: ${ord.status}</div>
+                <button onclick="window.marketplaceManager.deleteOrder('${ord.orderId}')" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171; padding: 0.2rem 0.5rem; border-radius: var(--radius-sm); font-size: 0.72rem; cursor: pointer; font-weight: 700;" title="Order history se hatayein">
+                  🗑️ Delete
+                </button>
+              </div>
+            </div>
+            <div style="font-size: 1.25rem; font-weight: 800; color: #ffffff; margin-bottom: 0.5rem;">
+              ${ord.cropTitle}
+            </div>
+            <div style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
+              📅 Order Date: <strong>${ord.date || 'Today'}</strong> &bull; Booking Trader: <strong>${ord.buyerFirm || this.profile.firm}</strong> (📞 ${ord.buyerPhone || this.profile.phone})
+            </div>
+            <div class="inv-grid">
+              <div>
+                <strong>👨‍🌾 Kisan (Farmer / Seller):</strong><br>
+                ${ord.farmerName}<br>
+                📞 <a href="tel:${ord.farmerPhone.replace(/[^0-9+]/g, '')}" style="color: #60a5fa; text-decoration: none;">${ord.farmerPhone}</a><br>
+                💳 <strong>Payment:</strong> <span style="color: var(--accent-gold);">${ord.paymentMethod || 'Direct Bank Transfer'}</span>
+              </div>
+              <div>
+                <strong>🌾 Quantity & Amount:</strong><br>
+                ${ord.quantity} Quintals @ ₹${ord.pricePerQuintal}/Qtl<br>
+                <strong style="color: var(--accent-gold); font-size: 1.2rem;">₹${ord.totalAmount.toLocaleString('en-IN')}</strong><br>
+                📍 <strong>Delivery Pata:</strong> <span style="font-size: 0.8rem; color: var(--text-secondary);">${ord.buyerAddress || 'APMC Yard'}</span>
+              </div>
+            </div>
+            <div class="inv-actions">
+              <a href="https://api.whatsapp.com/send?phone=${ord.farmerPhone.replace(/[^0-9]/g, '')}&text=${encodeURIComponent(`Namaste ${ord.farmerName} ji! Maine Surya Mandi se aapka ${ord.quantity} Quintal ${ord.cropTitle} ka order book kiya hai (Slip #${ord.orderId}). Kripya delivery aur pickup details confirm karein. - ${this.profile.firm} (${this.profile.name}, Ph: ${this.profile.phone})`)}" target="_blank" class="btn-whatsapp-invoice">
+                📲 WhatsApp Kisan Directly
+              </a>
+              <button class="btn-cert-inspect" onclick="window.marketplaceManager.showOrderSlip(window.marketplaceManager.orders.find(o => o.orderId === '${ord.orderId}'))">
+                📄 View / Print Slip
+              </button>
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      window.buyerApp = new BuyerApp();
+      window.app = window.buyerApp; // alias for cross-compatibility
+    });
+  </script>
+</body>
+</html>

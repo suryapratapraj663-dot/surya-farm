@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>SURYA FARMING (सूर्य फार्मिंग) - Smart Agricultural Ecosystem</title>
+  <meta name="description" content="किसान और थोक व्यापारियों के लिए अलग-अलग स्मार्ट ऐप्स">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" href="icons/portal-192.png">
+  <link rel="apple-touch-icon" href="icons/portal-192.png">
+  <meta name="theme-color" content="#10b981">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <style>
+    .portal-hero {
+      text-align: center;
+      padding: 3rem 1rem 2rem 1rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .portal-hero h1 {
+      font-size: 2.5rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #ffffff, #a7f3d0, #f59e0b);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+    .portal-hero p {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      max-width: 650px;
+      margin: 0 auto 2rem auto;
+    }
+    .portal-apps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 2rem;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 1rem 4rem 1rem;
+    }
+    .portal-app-card {
+      background: var(--bg-surface);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+      transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .card-farmer {
+      border: 2px solid rgba(16, 185, 129, 0.4);
+    }
+    .card-farmer:hover {
+      transform: translateY(-6px);
+      border-color: var(--accent-emerald);
+      box-shadow: 0 12px 36px rgba(16, 185, 129, 0.3);
+    }
+    .card-buyer {
+      border: 2px solid rgba(245, 158, 11, 0.4);
+    }
+    .card-buyer:hover {
+      transform: translateY(-6px);
+      border-color: var(--accent-gold);
+      box-shadow: 0 12px 36px rgba(245, 158, 11, 0.3);
+    }
+    .portal-icon {
+      font-size: 3.5rem;
+      margin-bottom: 1rem;
+    }
+    .portal-title {
+      font-size: 1.75rem;
+      font-weight: 900;
+      color: #ffffff;
+      margin-bottom: 0.5rem;
+    }
+    .portal-tagline {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+    .portal-feature-list {
+      list-style: none;
+      margin-bottom: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      font-size: 0.9rem;
+      color: #e5e7eb;
+    }
+    .portal-feature-list li {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .btn-portal-launch {
+      margin-top: auto;
+      display: block;
+      text-align: center;
+      padding: 1rem 1.5rem;
+      border-radius: var(--radius-md);
+      font-size: 1.1rem;
+      font-weight: 800;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-farmer-launch {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #042411;
+      box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4);
+    }
+    .btn-farmer-launch:hover {
+      background: #34d399;
+      transform: scale(1.02);
+    }
+    .btn-buyer-launch {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #000000;
+      box-shadow: 0 4px 16px rgba(245, 158, 11, 0.4);
+    }
+    .btn-buyer-launch:hover {
+      background: #fbbf24;
+      transform: scale(1.02);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Simple Bar -->
+  <header class="app-header">
+    <div class="brand-group">
+      <div class="brand-logo-icon">🌾</div>
+      <div class="brand-text">
+        <h1>SURYA FARMING</h1>
+        <div class="brand-subtitle">Smart IoT & B2B Mandi Ecosystem</div>
+      </div>
+    </div>
+    <div style="font-size: 0.85rem; color: var(--accent-emerald); font-weight: 700;">
+      🟢 Local Network Server Active (Port 8080)
+    </div>
+  </header>
+
+  <!-- Hero Launchpad -->
+  <div class="portal-hero">
+    <h1>SURYA FARMING ECOSYSTEM</h1>
+    <p>किसान और थोक व्यापारी दोनों के लिए अलग-अलग पूर्णतः समर्पित ऐप्लिकेशन्स। आप जिस पोर्टल पर जाना चाहते हैं, नीचे चुनें:</p>
+  </div>
+
+  <!-- Apps Grid -->
+  <div class="portal-apps-grid">
+
+    <!-- 1. FARMER APP -->
+    <div class="portal-app-card card-farmer">
+      <div class="portal-icon">👨‍🌾</div>
+      <h2 class="portal-title">SURYA KISAN APP</h2>
+      <div class="portal-tagline">
+        किसानों के लिए विशेष ऐप: खेत के नोड्स, लाइव कैमरा, AI स्कैनर और ऑटोमैटिक Telegram अलर्ट
+      </div>
+
+      <ul class="portal-feature-list">
+        <li>✅ <strong>1 Khet - 4 Smart IoT Nodes:</strong> कैमरा, तापमान, नमी व वायु गुणवत्ता</li>
+        <li>✅ <strong>10-Min Live Camera Scan:</strong> हर 10 मिनट में फसल की लाइव फोटो व AI जांच</li>
+        <li>✅ <strong>Automatic Telegram Alerts:</strong> पानी कम होने या फसल स्कैन पर फोटो सहित अलर्ट</li>
+        <li>✅ <strong>Dual Motor Pump Control:</strong> Telegram (/pump_on) व वेबसाइट दोनों से कंट्रोल</li>
+        <li>✅ <strong>AI Fasal Scanner:</strong> फसल तैयार हुई या नहीं, व बीमारी की डॉक्टर सलाह</li>
+        <li>✅ <strong>1-Click Mandi Listing:</strong> पकी फसल को 1-क्लिक में थोक मंडी में बेचें</li>
+        <li>✅ <strong>Hardware AI Architect:</strong> किसी भी नए सेंसर का सर्किट कनेक्शन व Arduino कोड</li>
+      </ul>
+
+      <a href="farmer.html" class="btn-portal-launch btn-farmer-launch">
+        🚀 Open Farmer App (किसान ऐप खोलें) →
+      </a>
+    </div>
+
+    <!-- 2. WHOLESALE BUYER APP -->
+    <div class="portal-app-card card-buyer">
+      <div class="portal-icon">🏢</div>
+      <h2 class="portal-title">SURYA VYAPARI APP</h2>
+      <div class="portal-tagline">
+        थोक व्यापारियों के लिए डिजिटल मंडी: AI प्रमाणित Grade A+ फसलें, डिजिटल खरीद पर्ची व सीधा किसान संपर्क
+      </div>
+
+      <ul class="portal-feature-list">
+        <li>✅ <strong>B2B Wholesale Mandi:</strong> गेहूं, टमाटर, सरसों, धान की थोक खरीद</li>
+        <li>✅ <strong>AI Quality Certificate:</strong> 100% लैब व नोड सेंसर प्रमाणित फसलें</li>
+        <li>✅ <strong>Field Node Sensor Proof:</strong> फसल पकने तक की मिट्टी की नमी व तापमान का इतिहास</li>
+        <li>✅ <strong>Bulk Purchase Orders:</strong> क्विंटल के हिसाब से थोक खरीद व अग्रिम बुकिंग</li>
+        <li>✅ <strong>Digital Purchase Slips:</strong> सुरक्षित डिजिटल इनवॉइस व अनुबंध पर्ची</li>
+        <li>✅ <strong>Direct Kisan WhatsApp:</strong> फसल उगाने वाले किसान से 1-क्लिक सीधा संपर्क</li>
+        <li>✅ <strong>Trader Profile & Licenses:</strong> APMC मंडी लाइसेंस व फर्म प्रबंधन</li>
+      </ul>
+
+      <a href="buyer.html" class="btn-portal-launch btn-buyer-launch">
+        🛒 Open Wholesale Buyer App (व्यापारी मंडी ऐप) →
+      </a>
+    </div>
+
+  </div>
+
+  <script src="js/pwaInstaller.js"></script>
+</body>
+</html>
